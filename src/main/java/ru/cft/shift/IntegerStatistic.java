@@ -12,7 +12,7 @@ public class IntegerStatistic {
         return sum.divide(BigInteger.valueOf(numberOfLines));
     }
     public void setSum(BigInteger number) {
-        sum.add(number);
+        sum = sum.add(number);
     }
 
 }

@@ -6,7 +6,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,8 +50,8 @@ public class Main {
     }
 
 
-    public static void main(String[] args) {
-        String rootProjectPath = Paths.get("").toAbsolutePath().toString();
+    public static void main(String[] args) throws IOException {
+        String rootProjectPath = Paths.get(System.getProperty("PROJECT_BASE_DIR", "")).toAbsolutePath().toString();
         StatisticMode statisticMode = StatisticMode.WITHOUT;
         List<File> inputFiles = new ArrayList<>();
         boolean appendOutputFiles = false; // append (true) or overwrite (false) an existing file.
@@ -100,7 +99,8 @@ public class Main {
             writerFloatFile = new FileWriter(outputFloatFile, appendOutputFiles);
         } catch (IOException e) {
             System.out.printf("An exception occurred %s", e.getMessage());
-            System.exit(0);
+
+            throw e;
         }
 
         List<Scanner> scanners = new ArrayList<>();
@@ -114,6 +114,8 @@ public class Main {
                 scanners.add(new Scanner(file, "UTF-8"));
             } catch (FileNotFoundException e) {
                 System.out.printf("An exception occurred %s", e.getMessage());
+
+                throw e;
             }
         }
         while (isEndOfFile) {
@@ -153,18 +155,20 @@ public class Main {
                         } else {
                             writerStringFile.write(str + "\n");
                             stringStatistic.numberOfLines++;
-                            int currentLenght = str.length();
-                            if (stringStatistic.maxLenght == 0 || stringStatistic.minLenght == 0) {
-                                stringStatistic.maxLenght = currentLenght;
-                                stringStatistic.minLenght = currentLenght;
-                            } else if (currentLenght > stringStatistic.maxLenght) {
-                                stringStatistic.maxLenght = currentLenght;
-                            } else if (currentLenght < stringStatistic.minLenght) {
-                                stringStatistic.minLenght = currentLenght;
+                            int currentLength = str.length();
+                            if (stringStatistic.maxLength == 0 || stringStatistic.minLength == 0) {
+                                stringStatistic.maxLength = currentLength;
+                                stringStatistic.minLength = currentLength;
+                            } else if (currentLength > stringStatistic.maxLength) {
+                                stringStatistic.maxLength = currentLength;
+                            } else if (currentLength < stringStatistic.minLength) {
+                                stringStatistic.minLength = currentLength;
                             }
                         }
                     } catch (IOException e) {
                         System.out.printf("An exception occurred %s", e.getMessage());
+
+                        throw e;
                     }
 
                 }
@@ -192,8 +196,8 @@ public class Main {
             System.out.println("SUM float: " + floatStatistic.sum + ", AVERAGE float: "
                     + floatStatistic.calculateAverage());
             System.out.println("Number of written String elements: " + stringStatistic.numberOfLines);
-            System.out.println("Lenght of the sortest string: " + stringStatistic.minLenght
-                    + ", lenght of the longest string: " + stringStatistic.maxLenght);
+            System.out.println("Lenght of the sortest string: " + stringStatistic.minLength
+                    + ", lenght of the longest string: " + stringStatistic.maxLength);
 
         }
 
@@ -207,6 +211,8 @@ public class Main {
             writerStringFile.close();
         } catch (IOException e) {
             System.out.printf("An exception occurred %s", e.getMessage());
+
+            throw e;
         }
 
     }
