@@ -58,7 +58,6 @@ public class Main {
         String outputFilePrefix = null;
         String outputFilePath = null;
         for (int i = 0; i < args.length; i++) {
-            System.out.println(args[i]);
             if (args[i].equals("-a")) { // mode to add to existing files (default: rewrite files)
                 appendOutputFiles = true;
             } else if (args[i].equals("-p")) { // prefix for output files
@@ -109,14 +108,18 @@ public class Main {
         FloatStatistic floatStatistic = new FloatStatistic();
         StringStatistic stringStatistic = new StringStatistic();
 
+        List<File> nonExistentFiles = new ArrayList<>();
         for (File file : inputFiles) {
             try {
                 scanners.add(new Scanner(file, "UTF-8"));
             } catch (FileNotFoundException e) {
-                System.out.printf("An exception occurred %s", e.getMessage());
-
-                throw e;
+                System.out.printf("%s", e.getMessage());
+                nonExistentFiles.add(file);
+                //throw e;
             }
+        }
+        for (int i = 0; i < nonExistentFiles.size(); i++) {
+            nonExistentFiles.remove(i);
         }
         while (isEndOfFile) {
             isEndOfFile = false;
@@ -178,7 +181,6 @@ public class Main {
             }
         }
 
-
         //show statistics
         if (statisticMode.equals(StatisticMode.SHORT)) {
             System.out.println("Short statistic");
@@ -213,6 +215,14 @@ public class Main {
             System.out.printf("An exception occurred %s", e.getMessage());
 
             throw e;
+        }
+
+        if (outputStringFile.length() == 0) {
+            outputStringFile.delete();
+        } else if (outputFloatFile.length() == 0) {
+            outputFloatFile.delete();
+        } else if (outputIntegerFile.length() == 0) {
+            outputIntegerFile.delete();
         }
 
     }
