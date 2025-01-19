@@ -24,10 +24,10 @@ class MainTest {
     void checkPreffix() throws IOException {
         Path path = Files.createTempDirectory("tmp");
 
-        System.setProperty("PROJECT_BASE_DIR", path.toAbsolutePath().toString());
+        System.setProperty(Main.PROJECT_BASE_DIR_ENV_NAME, path.toAbsolutePath().toString());
         String rootProjectPath =  path.toAbsolutePath().toString();
 
-        Main.main(new String[]{"-p", "sample-", "in1.txt", "in2.txt"});
+        Main.main(new String[]{"-p", "sample-", getTestFile("in1.txt"), getTestFile("in2.txt")});
 
         File fileStrings = Paths.get(rootProjectPath, "sample-strings.txt").toFile();
         File fileFloats = Paths.get(rootProjectPath,  "sample-floats.txt").toFile();
@@ -43,12 +43,12 @@ class MainTest {
     void checkPath() throws IOException {
         Path path = Files.createTempDirectory("tmp");
 
-        System.setProperty("PROJECT_BASE_DIR", path.toAbsolutePath().toString());
+        System.setProperty(Main.PROJECT_BASE_DIR_ENV_NAME, path.toAbsolutePath().toString());
         String rootProjectPath =  path.toAbsolutePath().toString();
         String customPath = "/some/path";
 
         Paths.get(rootProjectPath, customPath).toFile().mkdirs();
-        Main.main(new String[]{"-o", customPath , "in1.txt", "in2.txt"});
+        Main.main(new String[]{"-o", customPath , getTestFile("in1.txt"), getTestFile("in2.txt")});
         File fileStrings = Paths.get(rootProjectPath, customPath, "strings.txt").toFile();
         File fileFloats = Paths.get(rootProjectPath, customPath,  "floats.txt").toFile();
         File fileIntegers = Paths.get(rootProjectPath, customPath, "integers.txt").toFile();
@@ -65,10 +65,10 @@ class MainTest {
     @Test
     void checkFilesContent() throws IOException {
         Path path = Files.createTempDirectory("tmp");
-        System.setProperty("PROJECT_BASE_DIR", path.toAbsolutePath().toString());
+        System.setProperty(Main.PROJECT_BASE_DIR_ENV_NAME, path.toAbsolutePath().toString());
         String rootProjectPath =  path.toAbsolutePath().toString();
 
-        Main.main(new String[]{"in1.txt", "in2.txt"});
+        Main.main(new String[]{getTestFile("in1.txt"), getTestFile("in2.txt")});
 
         File fileStrings = Paths.get(rootProjectPath, "strings.txt").toFile();
         File fileFloats = Paths.get(rootProjectPath,  "floats.txt").toFile();
@@ -78,13 +78,13 @@ class MainTest {
         assertThat(fileFloats).exists();
         assertThat(fileIntegers).exists();
 
-        File expectedFileStrings = new File("src\\test\\resources\\" + "sample-strings.txt");
+        File expectedFileStrings = new File(getTestFile("sample-strings.txt"));
         assertThat(fileStrings).hasSameTextualContentAs(expectedFileStrings);
 
-        File expectedFileFloats = new File("src\\test\\resources\\" + "sample-floats.txt");
+        File expectedFileFloats = new File(getTestFile("sample-floats.txt"));
         assertThat(fileFloats).hasSameTextualContentAs(expectedFileFloats);
 
-        File expectedFileIntegers = new File("src\\test\\resources\\" + "sample-integers.txt");
+        File expectedFileIntegers = new File(getTestFile("sample-integers.txt"));
         assertThat(fileIntegers).hasSameTextualContentAs(expectedFileIntegers);
     }
 
@@ -92,11 +92,11 @@ class MainTest {
     @Test
     void checkAppendFilesContent() throws IOException {
         Path path = Files.createTempDirectory("tmp");
-        System.setProperty("PROJECT_BASE_DIR", path.toAbsolutePath().toString());
+        System.setProperty(Main.PROJECT_BASE_DIR_ENV_NAME, path.toAbsolutePath().toString());
         String rootProjectPath =  path.toAbsolutePath().toString();
 
-        Main.main(new String[]{"-a", "in1.txt", "in2.txt"});
-        Main.main(new String[]{"-a", "in1.txt", "in2.txt"});
+        Main.main(new String[]{"-a", getTestFile("in1.txt"), getTestFile("in2.txt")});
+        Main.main(new String[]{"-a", getTestFile("in1.txt"), getTestFile("in2.txt")});
 
         File fileStrings = Paths.get(rootProjectPath, "strings.txt").toFile();
         File fileFloats = Paths.get(rootProjectPath,  "floats.txt").toFile();
@@ -106,13 +106,13 @@ class MainTest {
         assertThat(fileFloats).exists();
         assertThat(fileIntegers).exists();
 
-        File expectedFileStrings = new File("src\\test\\resources\\" + "append_strings.txt");
+        File expectedFileStrings = new File(getTestFile("append_strings.txt"));
         assertThat(fileStrings).hasSameTextualContentAs(expectedFileStrings);
 
-        File expectedFileFloats = new File("src\\test\\resources\\" + "append_floats.txt");
+        File expectedFileFloats = new File(getTestFile("append_floats.txt"));
         assertThat(fileFloats).hasSameTextualContentAs(expectedFileFloats);
 
-        File expectedFileIntegers = new File("src\\test\\resources\\" + "append_integers.txt");
+        File expectedFileIntegers = new File(getTestFile("append_integers.txt"));
         assertThat(fileIntegers).hasSameTextualContentAs(expectedFileIntegers);
     }
 
@@ -120,10 +120,10 @@ class MainTest {
     @Test
     void checkEmptyFile() throws IOException {
         Path path = Files.createTempDirectory("tmp");
-        System.setProperty("PROJECT_BASE_DIR", path.toAbsolutePath().toString());
+        System.setProperty(Main.PROJECT_BASE_DIR_ENV_NAME, path.toAbsolutePath().toString());
         String rootProjectPath =  path.toAbsolutePath().toString();
 
-        Main.main(new String[]{"in3.txt", "in4.txt"});
+        Main.main(new String[]{getTestFile("in3.txt"), getTestFile("in4.txt")});
 
         File fileStrings = Paths.get(rootProjectPath, "strings.txt").toFile();
         File fileFloats = Paths.get(rootProjectPath,  "floats.txt").toFile();
@@ -140,9 +140,9 @@ class MainTest {
     void checkShortStatistic() throws IOException {
         System.setOut(new PrintStream(outContent));
         Path path = Files.createTempDirectory("tmp");
-        System.setProperty("PROJECT_BASE_DIR", path.toAbsolutePath().toString());
+        System.setProperty(Main.PROJECT_BASE_DIR_ENV_NAME, path.toAbsolutePath().toString());
 
-        Main.main(new String[]{"-s", "in1.txt", "in2.txt"});
+        Main.main(new String[]{"-s", getTestFile("in1.txt"), getTestFile("in2.txt")});
 
         assertEquals("Short statistic\r\n" +
                 "Number of written Integer elements: 3\r\n" +
@@ -157,9 +157,9 @@ class MainTest {
     void checkFullStatistic() throws IOException {
         System.setOut(new PrintStream(outContent));
         Path path = Files.createTempDirectory("tmp");
-        System.setProperty("PROJECT_BASE_DIR", path.toAbsolutePath().toString());
+        System.setProperty(Main.PROJECT_BASE_DIR_ENV_NAME, path.toAbsolutePath().toString());
 
-        Main.main(new String[]{"-f", "in1.txt", "in2.txt"});
+        Main.main(new String[]{"-f", getTestFile("in1.txt"), getTestFile("in2.txt")});
         assertEquals("Full statistic\r\n" +
                 "Number of written Integer elements: 3\r\n" +
                 "MIN integer: 45, MAX integer: 1234567890123456789\r\n" +
@@ -171,5 +171,9 @@ class MainTest {
                 "Lenght of the sortest string: 4, lenght of the longest string: 42\r\n", outContent.toString());
 
         System.setOut(originalOut);
+    }
+
+    private String getTestFile(String fileName) {
+        return String.format("src\\test\\resources\\" + fileName);
     }
 }
